@@ -1,0 +1,20 @@
+{
+  "name": "playing-with-puppeteer-apis",
+  "version": "0.0.1",
+  "scripts": {
+    "lint:script": "eslint --ext .js,.cjs,.mjs ./",
+    "serve:dynamic-html": "http-server ./prerender-pages-with-headless-chrome/public --port=8080",
+    "serve:api": "nodemon ./prerender-pages-with-headless-chrome/apis/posts.mjs",
+    "serve:headless-chrome": "nodemon ./prerender-pages-with-headless-chrome/server.mjs"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^3.0.1",
+    "puppeteer": "^21.1.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "eslint": "^8.48.0",
+    "http-server": "^14.1.1"
+  }
+}

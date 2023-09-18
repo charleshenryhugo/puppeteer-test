@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Page that generates its HTMl via JavaScript</title>
+</head>
+<body>
+  <img src="https://keiba.r10s.jp/img_common/pc/icon_sh_logo.png" width="200" alt="keiba-logo">
+  <div id="container">
+    <div>loading...</div>
+    <!-- Populated by the JS below -->
+  </div>
+</body>
+<script>
+  function renderPosts(posts, container) {
+    if (!container) {
+      return
+    }
+
+    const html = posts.reduce((acc, post) => {
+      return `
+        ${acc}
+        <li class="post">
+          <h2>${post.title}</h2>
+          <div>${post.summary}</div>
+          <p>${post.content}</p>
+        </li>
+      `
+    }, '')
+
+    container.innerHTML = `
+      <ul id="posts">${html}</ul>
+    `
+  }
+
+  ;(async () => {
+    const posts = await fetch('http://127.0.0.1:3000/posts').then((response) => response.json())
+    renderPosts(posts, document.querySelector('#container'))
+  })()
+</script>
+</html>
