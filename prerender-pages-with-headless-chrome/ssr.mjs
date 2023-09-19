@@ -28,7 +28,7 @@ export async function render({ url, browserWSEndpoint, needCache = true, removeS
 
   try {
     if (blockResources) {
-      setBlockResources(page)
+      await setBlockResources(page)
     }
 
     const stylesheetContents = blockResources ? {} : await setStashStylesheets(page, url)
@@ -73,23 +73,26 @@ export async function render({ url, browserWSEndpoint, needCache = true, removeS
 /**
  * Network requests that don't construct DOM are wasteful.
  * 
- * Tell browser to ignore images, fonts, stylesheets, and media.
+ * Tell browser to ignore images, fonts, stylesheets, media; and abort requests of analytics scripts
  * 
- * NOTICE: these resources will still get loaded on user's browser.
+ * NOTICE: images, fonts, stylesheets, media resources will still get loaded on user's browser.
  * 
  * @param {import ("puppeteer").Page} page 
  */
 async function setBlockResources(page) {
   /* intercept network requests */
   await page.setRequestInterception(true)
-  const blockList = ['stylesheet', 'image', 'media', 'font']
+  const mediaBlockList = ['stylesheet', 'image', 'media', 'font']
+  const scriptBlockList = ['www.google-analytics.com', '/gtag/js', 'ga.js', 'analytics.js', 'ytag', 'sitecatalyst', 'rat-main', 'gtm']
+
 
   return page.on('request', (req) => {
-    if (blockList.includes(req.resourceType())) {
+    if (mediaBlockList.includes(req.resourceType()) || scriptBlockList.find((regex) => req.url().match(regex))) {
       req.abort()
       console.log(`🛑 ABORT ${req.resourceType()} request resource: `, req.url())
       return
     }
+
     console.log(`✅ CONTINUE ${req.resourceType()} request resource: `, req.url())
     req.continue()
   })
