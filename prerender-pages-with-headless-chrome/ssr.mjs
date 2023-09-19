@@ -73,9 +73,11 @@ export async function render({ url, browserWSEndpoint, needCache = true, removeS
 /**
  * Network requests that don't construct DOM are wasteful.
  * 
- * Tell browser to ignore images, fonts, stylesheets, media; and abort requests of analytics scripts
+ * Tell browser to abort requests of these resources: 
  * 
- * NOTICE: images, fonts, stylesheets, media resources will still get loaded on user's browser.
+ * images; fonts; stylesheets; media; analytics scripts
+ * 
+ * NOTICE: images, fonts, stylesheets, media resources will still get loaded on real user's browser.
  * 
  * @param {import ("puppeteer").Page} page 
  */
