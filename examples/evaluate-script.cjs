@@ -4,14 +4,22 @@
 */
 const puppeteer = require('puppeteer')
 
+const dotenv = require('dotenv')
+dotenv.config({ path: `.env.${process.env.NODE_ENV}`})
+
+console.info(`Chrome path: ${process.env.CHROME_PATH}`)
+
 ;(async () => {
   const browser = await puppeteer.launch({
-    executablePath: '.cache/puppeteer/chrome/mac-116.0.5845.96/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+    executablePath: process.env.CHROME_PATH,
     headless: 'new',
   })
   const page = await browser.newPage()
+
+  const url = 'https://www.google.com'
+  console.info(`👾 Evaluate script on ${url}`)
   
-  await page.goto('https://keiba.rakuten.co.jp')
+  await page.goto(url)
 
   const dimensions = await page.evaluate(() => {
     return {

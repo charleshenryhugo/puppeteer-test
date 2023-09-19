@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "scripts": {
     "lint:script": "eslint --ext .js,.cjs,.mjs ./",
-    "serve:dynamic-html": "http-server ./prerender-pages-with-headless-chrome/public --port=8080",
-    "serve:api": "nodemon ./prerender-pages-with-headless-chrome/apis/posts.mjs",
-    "serve:headless-chrome": "nodemon ./prerender-pages-with-headless-chrome/server.mjs"
+    "serve:dynamic-html": "NODE_ENV=local http-server ./prerender-pages-with-headless-chrome/public --port=8080",
+    "serve:api": "NODE_ENV=local nodemon ./prerender-pages-with-headless-chrome/apis/posts.mjs",
+    "serve:headless-chrome": "NODE_ENV=local nodemon ./prerender-pages-with-headless-chrome/server.mjs"
   },
   "dependencies": {
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "nodemon": "^3.0.1",
     "puppeteer": "^21.1.1"

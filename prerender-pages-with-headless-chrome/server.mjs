@@ -4,14 +4,25 @@ import * as prerender from './ssr.mjs'
 /** @type {import ("puppeteer")} */
 import puppeteer from 'puppeteer'
 
-let browserWSEndpoint = null
-const app = express()
+import dotenv from 'dotenv'
+dotenv.config({ path: `.env.${process.env.NODE_ENV}`})
+console.info(`Chrome path: ${process.env.CHROME_PATH}`)
 
+let browserWSEndpoint = null
 async function initBrowserWSEndpoint() {
   if (!browserWSEndpoint) {
     const browser = await puppeteer.launch({
-      executablePath: '.cache/puppeteer/chrome/mac-116.0.5845.96/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+      executablePath: process.env.CHROME_PATH,
       headless: 'new', // launch headless version
+      args: [
+        '--no-sandbox',
+        '--headless',
+        '--disable-gpu',
+        '--remote-debugging-port=9222',
+        '--hide-scrollbars'
+        /* ref: https://www.chromium.org/developers/design-documents/network-settings/ */
+        // '--proxy-pac-url=http://xxx.pac'
+      ]
     })
 
     browserWSEndpoint = browser.wsEndpoint()
@@ -20,9 +31,10 @@ async function initBrowserWSEndpoint() {
   return browserWSEndpoint
 }
 
-// app.get('/favicon*', async (req, res) => {
-//   return res.redirect('http://127.0.0.1:8080/favicon.ico')
-// })
+const app = express()
+app.get('/favicon*', async (req, res) => {
+  return res.sendStatus(200)
+})
 
 const updateCacheUrls = []
 app.get('*', async (req, res) => {
@@ -43,7 +55,8 @@ app.get('*', async (req, res) => {
 
     let url = req.url.slice(1)
     if (!req.url.slice(1)?.length) {
-      url = `${req.protocol}://${req.get('host')}:8080`
+      // url = `${req.protocol}://${req.get('host')}:8080`
+      return res.status(200).send('You need to specify a valid url for headless chrome to render.')
     }
 
     console.info(`Headless Chrome will render: ${url}`)
@@ -60,7 +73,7 @@ app.get('*', async (req, res) => {
     return res.status(200).send(html)
   } catch (err) {
     console.log('😬', err)
-    return res.status(400).send(err.message)
+    return res.status(200).send(err.message)
   }
 })
 

@@ -1,6 +1,6 @@
 /**
- * @type {import ("puppeteer")}
- */
+* @type {import ("puppeteer")}
+*/
 const puppeteer = require('puppeteer')
 
 const dotenv = require('dotenv')
@@ -14,17 +14,15 @@ console.info(`Chrome path: ${process.env.CHROME_PATH}`)
     headless: 'new'
   })
   const page = await browser.newPage()
-
-  const url = 'https://www.google.com'
-  console.info(`📃 Download PDF of ${url}`)
-
-  await page.goto(url, {
-    waitUntil: 'networkidle2',
-  })
-
-  const outputPath = 'outputs/google.pdf'
-  await page.pdf({ path: outputPath, format: 'A4'})
-  console.log(`Output to ${outputPath}`)
   
+  const url = 'https://www.google.com'
+  console.info(`📸 Take screenshot on ${url}`)
+
+  await page.goto(url)
+
+  const outputPath = 'outputs/google.png'
+  await page.screenshot({ path: outputPath })
+  console.log(`Output to ${outputPath}`)
+
   await browser.close()
 })()
